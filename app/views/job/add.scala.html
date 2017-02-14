@@ -1,0 +1,196 @@
+@import util.IncludeHtml
+@import models.EtlJobMonitor
+@import models.EtlJob
+@(etlJobMonitorSeq:Seq[EtlJobMonitor],etlJobs:Seq[EtlJob])
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/bootstrap/css/bootstrap.min.css")" >
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/metisMenu/metisMenu.min.css")" >
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/sb-admin/css/sb-admin-2.css")" >
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/morrisjs/morris.css")" >
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/font-awesome/css/font-awesome.min.css")" >
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/multi-select/css/bootstrap-multiselect.css")">
+        <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("lib/select2/css/select2.css")">
+
+
+        <title>添加任务</title>
+
+    </head>
+    <body>
+
+        <div id="wrapper">
+
+            @IncludeHtml("/app/views/nav.scala.html")
+
+            <div id="page-wrapper">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3 class="page-header">添加任务</h3>
+                    </div>
+                        <!-- /.col-lg-12 -->
+                </div>
+                <div class="row">get
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading"></div>
+                                <!-- /.panel-heading -->
+                            <div class="panel-body">
+                                <form class="form-horizontal" role="form" action="/job/add" method="post">
+                                    <div class="form-group">
+                                        <label for="jobName" class="col-sm-2 control-label">任务名称</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="jobName" name="jobName" placeholder="任务的标识">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jobScript" class="col-sm-2 control-label">脚本路径</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="jobScript" name="jobScript" placeholder="脚本路径">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                            <label for="jobTrigger" class="col-sm-2 control-label">触发方式</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="jobTrigger" id="jobTrigger">
+                                                    <option value="">--选择负责人--</option>
+                                                    <option value="time">时间触发</option>
+                                                    <option value="dependency">依赖触发</option>
+                                                </select>
+                                            </div>
+                                    </div>
+                                    <div style="display:none" id="trigger-div">
+                                        <div class="form-group">
+                                            <label for="jobTrigger" class="col-sm-2 control-label">触发类型</label>
+                                            <div class="col-sm-10">
+                                                <select class="form-control" name="triggerType" id="triggerType">
+                                                    <option value="day">每天</option>
+                                                    <option value="week">每周</option>
+                                                    <option value="month">每月</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" >
+                                            <label for="startDay" class="col-sm-2 control-label">天</label>
+                                            <div class="col-sm-10">
+                                                <input type="text"  class="form-control" name="startDay" placeholder="如果是每天触发值为0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group" >
+                                            <label for="startHour" class="col-sm-2 control-label">小时</label>
+                                            <div class="col-sm-10">
+                                                <input type="text"  class="form-control" name="startHour" >
+                                            </div>
+                                        </div>
+                                        <div class="form-group" >
+                                            <label for="startMinute" class="col-sm-2 control-label">分钟</label>
+                                            <div class="col-sm-10">
+                                                <input type="text"  class="form-control" name="startMinute">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mainMan" class="col-sm-2 control-label">负责人</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" name="mainMan" id="mainMan">
+                                                        <option value="">--选择负责人--</option>
+                                                        @for(monitor <- etlJobMonitorSeq){
+                                                                <option value ="@monitor.userName">@monitor.userName</option>
+                                                        }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jobDesc" class="col-sm-2 control-label">描述信息</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="jobDesc" placeholder="任务描述信息">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jobDependency" class="col-sm-2 control-label">依赖任务</label>
+                                        <div class="col-sm-10">
+                                            <select id="jobDependency" name="jobDependency" multiple="multiple">
+                                                @for(etlJob <- etlJobs){
+                                                    <option value="@etlJob.jobName">@etlJob.jobName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jobStream" class="col-sm-2 control-label">触发执行任务</label>
+                                        <div class="col-sm-10">
+                                            <select id="jobStream" name="jobStream" class="form-control" data-live-search="true" >
+                                                <option value="">--选择触发执行任务--</option>
+                                            @for(etlJob <- etlJobs){
+                                                <option value="@etlJob.jobName">@etlJob.jobName</option>
+                                            }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-default">确认</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+                            <!-- /.panel -->
+                    </div>
+                        <!-- /.col-lg-12 -->
+                </div>
+
+                    <!-- /.row -->
+            </div>
+                <!-- /#page-wrapper -->
+
+        </div>
+            <!-- /#wrapper -->
+
+        <script src="@routes.Assets.versioned("lib/jquery/jquery.min.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/bootstrap/js/bootstrap.min.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/metisMenu/metisMenu.min.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/raphael/raphael.min.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/morrisjs/morris.min.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/data/morris-data.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/sb-admin/js/sb-admin-2.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/multi-select/js/bootstrap-multiselect.js")" ></script>
+        <script src="@routes.Assets.versioned("lib/select2/js/select2.js")" ></script>
+
+        <script type="text/javascript">
+                $(document).ready(function() {
+                    $('#jobDependency').multiselect({
+                        includeSelectAllOption: true,
+                        enableFiltering: true,
+                        nonSelectedText: '选择依赖任务',
+                        selectAllText: '全部选择',
+                        delimiterText: ',',
+                        buttonWidth: '100%',
+                        numberDisplayed:10
+                    });
+
+                    var mainManSelect = $('#mainMan').select2();
+                    var jobTriggerSelect = $('#jobTrigger').select2() ;
+                    jobTriggerSelect.on("select2:select",function(e){
+                        var trigger = e.params.data.id ;
+                        if(trigger == 'time'){
+                            $("#trigger-div").show()
+                        }else{
+                            $("#trigger-div").hide()
+                        }
+
+                    }) ;
+                    var jobStreamSelect = $('#jobStream').select2();
+
+                });
+        </script>
+
+    </body>
+</html>
