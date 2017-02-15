@@ -130,7 +130,7 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
           case _ => None
         }
         etlJobService.saveEtlJob(etlJob,etlJobStream,etlJobDependencySeq,jobTrigger)
-        Redirect(routes.EtlJobController.list())
+        Redirect(routes.EtlJobController.findPage())
       }
     )
   })
@@ -218,12 +218,12 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
 
   /**
     * 根据Job名称删除Job
-    * @param jobName
+    * @param id
     * @return
     */
-  def delete(jobName:String) = Action(implicit request => {
-    Logger.info(s"删除EtlJob:$jobName")
-    val etlJob = etlJobService.findEtlJobByName(jobName)
+  def delete(id:Int) = Action(implicit request => {
+    Logger.info(s"删除EtlJob:$id")
+    val etlJob = etlJobService.findEtlJobById(id)
     etlJob match {
       case Some(job) => {
         val jobName = job.jobName
@@ -235,6 +235,7 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
       }
     }
   })
+
 
   /**
     * 分页显示Job信息

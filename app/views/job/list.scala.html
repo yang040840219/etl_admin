@@ -35,42 +35,51 @@
                     <div class="col-lg-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <form method="get" action="/job/findPage" role="form">
-                                    <input type="hidden" name="pageNumber" value="@pages.page" />
-                                    <div>
-                                        <label for="jobName" class="col-sm-1">任务名称</label>
-                                        <div class="col-sm-3">
-                                            <input type="text" class="form-control" name="jobName" value="@jobName" id="jobName" placeholder="任务名称">
-                                        </div>
+                                <div class="row" >
+                                    <div class="col-lg-11">
+                                        <form method="get" action="/job/findPage" role="form" id="jobForm">
+                                            <input type="hidden" name="pageNumber" value="@pages.page" />
+                                            <div>
+                                                <label for="jobName" class="col-sm-1">名称</label>
+                                                <div class="col-sm-2">
+                                                    <input type="text" class="form-control" name="jobName" value="@jobName" id="jobName" placeholder="任务名称">
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label for="jobName" class="col-sm-1">状态</label>
+                                                <div class="col-sm-2">
+                                                     <select name="jobStatus" class="form-control">
+                                                         <option value="">未选择</option>
+                                                         <option value="Pending" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Pending")){ selected = "selected"} } >Pending</option>
+                                                         <option value="Running" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Running")){ selected = "selected"} } >Running</option>
+                                                         <option value="Done" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Done")){ selected = "selected"} } >Done</option>
+                                                         <option value="Failed" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Failed")){ selected = "selected"} } >Failed</option>
+                                                     </select>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-default">查询</button>
+                                        </form>
                                     </div>
-                                    <div>
-                                        <label for="jobName" class="col-sm-1">任务状态</label>
-                                        <div class="col-sm-2">
-                                             <select name="jobStatus" class="form-control">
-                                                 <option value="">未选择</option>
-                                                 <option value="Pending" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Pending")){ selected = "selected"} } >Pending</option>
-                                                 <option value="Running" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Running")){ selected = "selected"} } >Running</option>
-                                                 <option value="Done" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Done")){ selected = "selected"} } >Done</option>
-                                                 <option value="Failed" @if(!jobStatus.isEmpty) { @if(jobStatus.get.equals("Failed")){ selected = "selected"} } >Failed</option>
-                                             </select>
-                                        </div>
+                                    <div class="col-sm-1">
+                                        <button type="btn" name="btn_add" class="btn btn-default">添加</button>
                                     </div>
-                                    <button type="submit" class="btn btn-default">查询</button>
-                                </form>
+                                </div>
                             </div>
                                 <!-- /.panel-heading -->
                             <div class="panel-body">
                                 <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                     <thead>
                                         <tr>
-                                            <th>任务名称</th>
-                                            <th>任务运行状态</th>
+                                            <th>名称</th>
+                                            <th>运行状态</th>
                                             <th>脚本位置</th>
                                             <th>触发方式</th>
-                                            <th>上次运行日期</th>
+                                            <th>开始运行时间</th>
+                                            <th>结束运行时间</th>
                                             <th>负责人</th>
-                                            <th>任务描述</th>
-                                            <th>任务是否可用</th>
+                                            <th>运行次数</th>
+                                            <th>描述</th>
+                                            <th>是否可用</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
@@ -81,14 +90,16 @@
                                                 <td>@job.jobStatus</td>
                                                 <td>@job.jobScript</td>
                                                 <td>@job.jobTrigger</td>
-                                                <td>@job.lastRunDate</td>
+                                                <td>@job.lastStartTime</td>
+                                                <td>@job.lastEndTime</td>
                                                 <td>@job.mainMan</td>
+                                                <td>@job.retryCount</td>
                                                 <td>@job.jobDesc</td>
                                                 <td>@job.enable</td>
                                                 <td>
                                                     <button type="button" name="btn_dep_stream" id="@job.jobName" class="btn btn-default">依赖</button>
                                                     <button type="button" name="btn_update" id="@job.jobName" class="btn btn-default">修改</button>
-                                                    <button type="button" name="btn_delete" id="@job.jobName" class="btn btn-default" data-toggle="confirmation" >删除</button>
+                                                    <button type="button" name="btn_delete" id="@job.id" class="btn btn-default" data-toggle="confirmation" >删除</button>
                                                 </td>
                                             </tr>
                                         }
@@ -101,10 +112,10 @@
                                 <nav>
                                     <ul class="pager">
                                         @if(!pages.prev.isEmpty){
-                                            <li><a href="@pages.prevPage">上一页</a></li>
+                                            <li><a href="javascript:void(0)" value="@pages.prevPage" id="prevPage">上一页</a></li>
                                         }
                                         @if(!pages.next.isEmpty){
-                                            <li><a href="@pages.nextPage">下一页</a></li>
+                                            <li><a href="javascript:void(0)" value="@pages.nextPage" id="nextPage">下一页</a></li>
                                         }
 
                                     </ul>
@@ -183,6 +194,27 @@
     </body>
 
     <script type="text/javascript">
+
+             $("#prevPage").on('click',function(e){
+                 var prevPage = $(this).attr('value') ;
+                 $("input[name='pageNumber']").val(prevPage) ;
+                 $("#jobForm").submit() ;
+
+             })
+
+
+             $("#nextPage").on('click',function(e){
+                 var nextPage = $(this).attr('value') ;
+                 $("input[name='pageNumber']").val(nextPage) ;
+                 $("#jobForm").submit() ;
+
+             })
+
+
+            $("[name='btn_add']").on("click",function(e){
+                window.location.href="/job/prevAdd"
+            })
+
            	$("[name='btn_update']").on("click",function(e){
                  var jobName = $(this).attr("id") ;
                  window.location.href="/job/prevUpdate/" + jobName

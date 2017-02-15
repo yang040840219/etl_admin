@@ -41,6 +41,13 @@ class EtlJobService @Inject()(val etlJobDao: EtlJobDao,
     })
   }
 
+
+  def findEtlJobById(id:Int):Option[EtlJob] = {
+      val futureEtlJob = etlJobDao.findEtlJobById(id)
+      val etlJob = Await.result(futureEtlJob,Duration.Inf)
+      etlJob
+  }
+
   /**
     * 保存 job
     *

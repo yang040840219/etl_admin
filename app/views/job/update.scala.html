@@ -144,9 +144,10 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="jobDependency" class="col-sm-2 control-label">依赖任务</label>
+                                        <input type="hidden" name="jobDependency" value="">
+                                        <label for="jobDependencySelect" class="col-sm-2 control-label">依赖任务</label>
                                         <div class="col-sm-10">
-                                            <select id="jobDependency" name="jobDependency" multiple="multiple">
+                                            <select id="jobDependencySelect" name="jobDependencySelect" multiple="multiple">
                                                 @for(depJob <- etlJobs){
                                                     <option value="@depJob.jobName"
                                                     @if(jobDependency.map(_.dependencyJob).contains(depJob.jobName)){
@@ -209,14 +210,19 @@
 
         <script type="text/javascript">
                 $(document).ready(function() {
-                    $('#jobDependency').multiselect({
+                    $('#jobDependencySelect').multiselect({
                         includeSelectAllOption: true,
                         enableFiltering: true,
                         nonSelectedText: '选择依赖任务',
                         selectAllText: '全部选择',
                         delimiterText: ',',
                         buttonWidth: '100%',
-                        numberDisplayed:10
+                        numberDisplayed:10,
+                        enableClickableOptGroups:true,
+                        onChange: function() {
+                            selected = $('#jobDependencySelect').val() ;
+                            $("input[name='jobDependency']").val(selected.join(","))
+                        }
                     });
 
                     var mainManSelect = $('#mainMan').select2();

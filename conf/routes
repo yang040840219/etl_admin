@@ -16,16 +16,15 @@ GET         /job/prevAdd                       controllers.etl.EtlJobController.
 POST        /job/add                           controllers.etl.EtlJobController.add
 GET         /job/prevUpdate/:jobName           controllers.etl.EtlJobController.prevUpdate(jobName:String)
 POST        /job/update                        controllers.etl.EtlJobController.update
-GET         /job/delete/:jobName               controllers.etl.EtlJobController.delete(jobName:String)
+GET         /job/delete/:id                    controllers.etl.EtlJobController.delete(id:Int)
 GET         /job/findPage                      controllers.etl.EtlJobController.findPage
 GET         /job/showEtlJobMap/:jobName        controllers.etl.EtlJobController.showEtlJobMap(jobName:String)
 GET         /monitor/list                      controllers.etl.EtlJobMonitorController.list
-
-
-
-
-
-
+GET         /monitor/ajax/get/:userName        controllers.etl.EtlJobMonitorController.ajaxGet(userName:String)
+POST        /monitor/ajax/save                 controllers.etl.EtlJobMonitorController.ajaxSave
+GET         /monitor/delete/:id                controllers.etl.EtlJobMonitorController.delete(id:Int)
+GET        /queue/findPage                    controllers.etl.EtlJobQueueController.findPage
+GET         /queue/delete/:id                  controllers.etl.EtlJobQueueController.delete(id:Int)
 
 
 # Map static resources from the /public folder to the /assets URL path

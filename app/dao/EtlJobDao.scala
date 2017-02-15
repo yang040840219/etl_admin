@@ -65,6 +65,16 @@ class EtlJobDao @Inject()(@NamedDatabase("db_etl") val dbConfigProvider: Databas
   }
 
   /**
+    * 根据主键查找
+    * @param id
+    * @return
+    */
+  def findEtlJobById(id:Int):Future[Option[EtlJob]] = {
+     val action = query.filter(_.id === id).result.headOption
+     db.run(action)
+  }
+
+  /**
     * 根据jobName 查找
     *
     * @param jobName

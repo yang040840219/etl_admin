@@ -1,6 +1,6 @@
 package vo
 
-import models.{EtlJob, EtlJobDependency, EtlJobStream}
+import models.{EtlJobMonitor, EtlJob, EtlJobDependency, EtlJobStream}
 import play.api.libs.json.{Writes, Format, Json}
 
 /**
@@ -18,4 +18,7 @@ object JsonModel {
   implicit val jobDependencyFormat:Format[EtlJobDependency] = Json.format[EtlJobDependency]
   implicit val jobStreamFormat:Format[EtlJobStream] = Json.format[EtlJobStream]
   implicit val jobFormat:Format[EtlJob] = Json.format[EtlJob]
+
+  implicit val etlJobMonitorFormat:Format[EtlJobMonitor] = Json.format[EtlJobMonitor]
+
 }

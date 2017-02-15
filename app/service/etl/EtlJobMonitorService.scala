@@ -20,5 +20,22 @@ class EtlJobMonitorService @Inject()(val etlJobMonitorDao:EtlJobMonitorDao) {
        etlJobMonitorDao.list()
   }
 
+  /**
+    * 根据名称查询负责人
+    * @param userName
+    * @return
+    */
+  def get(userName:String): Future[Option[EtlJobMonitor]] = {
+        etlJobMonitorDao.get(userName)
+  }
+
+  def save(etlJobMonitor:EtlJobMonitor):Future[Int] = {
+     etlJobMonitorDao.saveOrUpdate(etlJobMonitor)
+  }
+
+
+  def delete(id:Int): Future[Int] = {
+      etlJobMonitorDao.delete(id)
+  }
 
 }

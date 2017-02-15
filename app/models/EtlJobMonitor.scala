@@ -21,3 +21,6 @@ class EtlJobMonitorTable(tag:Tag) extends Table[EtlJobMonitor](tag,"t_etl_job_mo
   def * = (id.?,userName,userPhone,enable) <> ((EtlJobMonitor.apply _).tupled,EtlJobMonitor.unapply)
 
 }
+
+
+class EtlJobMonitorForm
