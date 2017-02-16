@@ -93,7 +93,7 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
         Logger.info(s"添加EtlJob:$etlJobData")
         /* binding success, you get the actual value. */
         val etlJob = EtlJob(jobName=etlJobData.jobName,
-                            jobStatus = EtlJob.DONE,
+                            jobStatus = BaseJob.DONE,
                             pendingTime = "",
                             lastStartTime = "",
                             lastEndTime = "",
@@ -103,16 +103,16 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
                             jobPriority = 1,
                             lastRunDate = "",
                             mainMan = etlJobData.mainMan,
-                            enable = EtlJob.ENABLE,
+                            enable = BaseJob.ENABLE,
                             jobDesc = etlJobData.jobDesc.getOrElse(""))
         val jobStream = etlJobData.jobStream.getOrElse("")
-        val etlJobStream = EtlJobStream(jobName = jobStream,streamJob = etlJobData.jobName,enable = EtlJobStream.ENABLE)
+        val etlJobStream = EtlJobStream(jobName = jobStream,streamJob = etlJobData.jobName,enable = BaseJob.ENABLE)
         val jobDependency = etlJobData.jobDependency
         val etlJobDependencySeq:Seq[EtlJobDependency] = jobDependency match {
           case None => Seq[EtlJobDependency]()
           case Some(jobDeps) => {
                 val deps = jobDeps.split(",").map(_.trim()).map(dep => {
-                  EtlJobDependency(jobName = etlJobData.jobName,dependencyJob = dep,enable = EtlJob.ENABLE)
+                  EtlJobDependency(jobName = etlJobData.jobName,dependencyJob = dep,enable = BaseJob.ENABLE)
                 })
                 deps
           }
@@ -174,7 +174,7 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
         Logger.info(s"修改EtlJob:$etlJobData")
         /* binding success, you get the actual value. */
         val etlJob = EtlJob(jobName=etlJobData.jobName,
-          jobStatus = EtlJob.DONE,
+          jobStatus = BaseJob.DONE,
           pendingTime = etlJobData.pendingTime.getOrElse(""),
           lastStartTime = etlJobData.lastStartTime.getOrElse(""),
           lastEndTime = etlJobData.lastEndTime.getOrElse(""),
@@ -184,16 +184,16 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
           jobPriority = etlJobData.jobPriority.getOrElse(1),
           lastRunDate = etlJobData.lastRunDate.getOrElse(""),
           mainMan = etlJobData.mainMan,
-          enable = EtlJob.ENABLE,
+          enable = BaseJob.ENABLE,
           jobDesc = etlJobData.jobDesc.getOrElse(""))
         val jobStream = etlJobData.jobStream.getOrElse("")
-        val etlJobStream = EtlJobStream(jobName = jobStream, streamJob = etlJobData.jobName, enable = EtlJobStream.ENABLE)
+        val etlJobStream = EtlJobStream(jobName = jobStream, streamJob = etlJobData.jobName, enable = BaseJob.ENABLE)
         val jobDependency = etlJobData.jobDependency
         val etlJobDependencySeq: Seq[EtlJobDependency] = jobDependency match {
           case None => Seq[EtlJobDependency]()
           case Some(jobDependency) => {
             val deps = jobDependency.split(",").map(_.trim()).map(dep => {
-              EtlJobDependency(jobName = etlJobData.jobName, dependencyJob = dep, enable = EtlJob.ENABLE)
+              EtlJobDependency(jobName = etlJobData.jobName, dependencyJob = dep, enable = BaseJob.ENABLE)
             })
             deps
           }
@@ -277,7 +277,6 @@ class EtlJobController @Inject()(val etlJobService:EtlJobService,
            }
 
            val etlJobDetail = EtlJobDetail(jobName,dependencyEtlJob,streamEtlJob)
-           Logger.info(Json.prettyPrint(Json.toJson(etlJobDetail)))
            Ok(Json.toJson(etlJobDetail))
          }
        }

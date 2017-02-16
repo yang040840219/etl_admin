@@ -1,9 +1,9 @@
 $(function() {
 
-    Morris.Line({
+    Morris.Bar({
         element: 'morris-area-chart',
         data: [{
-            period: '2016-01-01',
+            day: '2016-01-01',
             ods: 2666,
             fact: null,
             dim: 2647,
@@ -11,7 +11,7 @@ $(function() {
             dwd:2312,
             app:1231
         },{
-            period: '2016-01-02',
+            day: '2016-01-02',
             ods: 3666,
             fact: null,
             dim: 3647,
@@ -19,7 +19,7 @@ $(function() {
             dwd:2312,
             app:2231
         }],
-        xkey: 'period',
+        xkey: 'day',
         ykeys: ['ods', 'fact', 'dim','dwa','dwd','app'],
         labels: ['ods', 'fact', 'dim', 'dwa', 'dwd','app'],
         pointSize: 2,

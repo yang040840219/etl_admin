@@ -4,7 +4,7 @@ package models
 /**
   * Created by yxl on 17/1/5.
   */
-trait BaseJob {
+object BaseJob {
 
   val DONE = "Done"
   val RUNNING = "Running"

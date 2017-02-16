@@ -74,11 +74,9 @@
                                             <th>运行状态</th>
                                             <th>脚本位置</th>
                                             <th>触发方式</th>
-                                            <th>开始运行时间</th>
-                                            <th>结束运行时间</th>
+                                            <th>运行日期</th>
                                             <th>负责人</th>
                                             <th>运行次数</th>
-                                            <th>描述</th>
                                             <th>是否可用</th>
                                             <th>操作</th>
                                         </tr>
@@ -90,11 +88,9 @@
                                                 <td>@job.jobStatus</td>
                                                 <td>@job.jobScript</td>
                                                 <td>@job.jobTrigger</td>
-                                                <td>@job.lastStartTime</td>
-                                                <td>@job.lastEndTime</td>
+                                                <td>@job.lastRunDate</td>
                                                 <td>@job.mainMan</td>
                                                 <td>@job.retryCount</td>
-                                                <td>@job.jobDesc</td>
                                                 <td>@job.enable</td>
                                                 <td>
                                                     <button type="button" name="btn_dep_stream" id="@job.jobName" class="btn btn-default">依赖</button>
@@ -234,7 +230,7 @@
                 var jobName = $(this).attr("id") ;
                 $.get("/job/showEtlJobMap/" + jobName,function(data,status){
                     console.log(data) ;
-                    $("#job_modal_title").empty().append(jobName + "依赖信息")
+                    $("#job_modal_title").empty().append(jobName)
                     var stream = data.jobStream ;
                     var streamModal = $("#stream_job_modal") ;
                     streamModal.empty() ;

@@ -15,7 +15,6 @@ case class EtlJob(id:Option[Int] = None,jobName:String,jobStatus:String,
                   jobPriority: Int,lastRunDate:String,mainMan:String,
                   enable:Int,jobDesc:String)
 
-object EtlJob extends BaseJob
 
 class EtlJobTable(tag:Tag) extends Table[EtlJob](tag,"t_etl_job"){
 
@@ -33,9 +32,6 @@ class EtlJobTable(tag:Tag) extends Table[EtlJob](tag,"t_etl_job"){
   def mainMan = column[String]("main_man")
   def enable = column[Int]("enable")
   def jobDesc = column[String]("job_desc")
-
-//  val apply : (Option[Int], String, String, String, String, String, String,
-//            Int, String, Int, String, String, Int, String) => EtlJob = EtlJob.apply
 
   def * = (id.?,jobName,jobStatus,pendingTime,lastStartTime,
           lastEndTime,jobScript,retryCount,jobTrigger,

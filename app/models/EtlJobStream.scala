@@ -9,7 +9,6 @@ import slick.driver.MySQLDriver.api._
 
 case class EtlJobStream(id:Option[Int] = None,jobName:String,streamJob:String,enable:Int)
 
-object EtlJobStream extends BaseJob
 
 class EtlJobStreamTable(tag:Tag) extends Table[EtlJobStream](tag,"t_etl_job_stream"){
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -17,6 +16,8 @@ class EtlJobStreamTable(tag:Tag) extends Table[EtlJobStream](tag,"t_etl_job_stre
   def streamJob = column[String]("stream_job")
   def enable = column[Int]("enable")
 
-  def * = (id.?,jobName,streamJob,enable) <> ((EtlJobStream.apply _).tupled,EtlJobStream.unapply)
+  val apply = (id:Option[Int],jobName:String,streamJob:String,enable:Int) => EtlJobStream(id,jobName,streamJob,enable)
+
+  def * = (id.?,jobName,streamJob,enable) <> (apply.tupled,EtlJobStream.unapply)
 }
 
