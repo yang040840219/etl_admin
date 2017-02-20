@@ -16,8 +16,28 @@ class EtlJobStreamTable(tag:Tag) extends Table[EtlJobStream](tag,"t_etl_job_stre
   def streamJob = column[String]("stream_job")
   def enable = column[Int]("enable")
 
-  val apply = (id:Option[Int],jobName:String,streamJob:String,enable:Int) => EtlJobStream(id,jobName,streamJob,enable)
+  val apply = (id:Option[Int],jobName:String,streamJob:String,enable:Int) =>
+    EtlJobStream(id,jobName,streamJob,enable)
 
-  def * = (id.?,jobName,streamJob,enable) <> (apply.tupled,EtlJobStream.unapply)
+  val unapply = (etlJobStream:EtlJobStream) => Option(etlJobStream.id,etlJobStream.jobName,
+    etlJobStream.streamJob,etlJobStream.enable)
+
+  def * = (id.?,jobName,streamJob,enable) <> (apply.tupled,unapply)
+}
+
+
+class EtlJobStreamTableTuple(tag:Tag) extends Table[(Option[Int],String,String,Int)](tag,"t_etl_job_stream"){
+  def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+  def jobName = column[String]("job_name")
+  def streamJob = column[String]("stream_job")
+  def enable = column[Int]("enable")
+
+  val apply = (id:Option[Int],jobName:String,streamJob:String,enable:Int) =>
+    EtlJobStream(id,jobName,streamJob,enable)
+
+  val unapply = (etlJobStream:EtlJobStream) => Option(etlJobStream.id,etlJobStream.jobName,
+    etlJobStream.streamJob,etlJobStream.enable)
+
+  def * = (id.?,jobName,streamJob,enable)
 }
 

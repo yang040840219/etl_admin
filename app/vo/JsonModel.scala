@@ -21,4 +21,5 @@ object JsonModel {
 
   implicit val etlJobMonitorFormat:Format[EtlJobMonitor] = Json.format[EtlJobMonitor]
 
+
 }

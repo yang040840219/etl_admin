@@ -150,5 +150,17 @@ class EtlJobDao @Inject()(@NamedDatabase("db_etl") val dbConfigProvider: Databas
   }
 
 
+  def aggLayerDuration(start:String,end:String):Future[Seq[(String,String,String,String)]] = {
+
+    val action = for{
+       job <- query if job.jobStatus === "Done" && job.lastRunDate >= start && job.lastRunDate <= end
+    } yield {
+      (job.jobName,job.lastStartTime,job.lastEndTime,job.lastRunDate)
+    }
+
+    db.run(action.result)
+
+  }
+
 
 }

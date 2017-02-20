@@ -20,6 +20,7 @@ GET         /queue/findPage                    controllers.etl.EtlJobQueueContro
 GET         /queue/delete/:id                  controllers.etl.EtlJobQueueController.delete(id:Int)
 POST        /login                             controllers.etl.LoginController.login
 GET         /logout                            controllers.etl.LoginController.logout
+GET         /jobDurationTime                   controllers.etl.DashboardController.jobDurationTime
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                      controllers.Assets.versioned(path="/public", file: Asset)

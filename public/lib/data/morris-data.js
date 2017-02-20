@@ -5,7 +5,6 @@ $(function() {
         data: [{
             day: '2016-01-01',
             ods: 2666,
-            fact: null,
             dim: 2647,
             dwa:1123,
             dwd:2312,

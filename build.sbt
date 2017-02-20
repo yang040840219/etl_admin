@@ -16,3 +16,5 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.0"
 )
 libraryDependencies += "mysql" % "mysql-connector-java" % "6.0.3"
+
+libraryDependencies += "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.7.2"

@@ -1,6 +1,7 @@
 package service.etl
 
 import javax.inject.{Singleton, Inject}
+import _root_.util.DateUtil
 import dao.{EtlJobTriggerDao, EtlJobDependencyDao, EtlJobStreamDao, EtlJobDao}
 import models._
 import org.apache.commons.lang3.StringUtils
@@ -9,6 +10,8 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 import scala.concurrent._
 import ExecutionContext.Implicits.global
+
+import scala.collection.mutable.Map
 
 /**
   * Created by yxl on 17/1/5.
@@ -34,11 +37,9 @@ class EtlJobService @Inject()(val etlJobDao: EtlJobDao,
     *
     * @return
     */
-  def countEtlJobStatus(): Future[Map[String, Int]] = {
+  def countEtlJobStatus(): Future[Seq[(String, Int)]] = {
     val jobStatus = etlJobDao.countEtlJobStatus()
-    jobStatus.map({
-      _.toMap[String, Int]
-    })
+    jobStatus
   }
 
 
@@ -163,7 +164,7 @@ class EtlJobService @Inject()(val etlJobDao: EtlJobDao,
     etlJobDao.findEtlJobByFilter(selectJobName, selectJobStatus, pageNumber, pageSize)
   }
 
-  def chargeNone(condition:Option[String])  = {
+  private def chargeNone(condition:Option[String])  = {
       condition match {
         case Some(value) => {
             if(StringUtils.isEmpty(value)){
@@ -176,4 +177,46 @@ class EtlJobService @Inject()(val etlJobDao: EtlJobDao,
       }
   }
 
+
+  def aggLayerDuration(start:String,end:String):Future[List[Map[String,String]]] = {
+
+    val jobDurations = etlJobDao.aggLayerDuration(start,end)
+
+    jobDurations.map(durations => {
+        val seq = durations.map(job => {
+           val jobName = job._1.split("_").apply(0)
+           val lastStartTime = job._2
+           val lastEndTime = job._3
+           val lastRunDate = job._4
+          (jobName,DateUtil.string2millis(lastEndTime) - DateUtil.string2millis(lastStartTime),lastRunDate)
+        })
+        val emptyMap = Map[String,Long]().withDefaultValue(0l)
+        val agg = seq.foldLeft(emptyMap)((map,item) => {
+            val key = item._1 + "#" + item._3
+            map.updated(key,item._2/(1000*60) + map.getOrElse(key,0l))
+        })
+        val emptyDateMap = Map[String,Map[String,String]]()
+
+        val dateAgg = agg.foldLeft(emptyDateMap)({
+          case (map, (key, value)) => {
+            val job = key.split("#").apply(0)
+            val period = key.split("#").apply(1)
+            map.get(period) match {
+              case Some(m) => {
+                m.put(job,value.toString)
+                map.updated(period,m)
+              }
+              case None => {
+                val keyValueMap = Map[String,String]()
+                keyValueMap.put("period",period)
+                keyValueMap.put(job,value.toString)
+                map.updated(period,keyValueMap)
+              }
+            }
+          }
+        }).map(x => x._2).toList
+
+        dateAgg
+    })
+  }
 }
